@@ -127,16 +127,7 @@ class Text():
             return 4
         elif self.action == "creditos":
             return 5
-        # elif self.action == "som":
-        #     return 6
-        # elif self.action == "controles":
-        #     return 7
-        # elif self.action == "pause":
-        #     return 8
-        # elif self.action == "change_key":
-        #     print(self.input_on)
-        #     return 9
-
+        
 class Game():
     def __init__(self):
         #starta pygame modulo
@@ -265,42 +256,6 @@ class Game():
         btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
         self.lista_botoes.append(btn_close)
 
-    # def draw_controles(self):
-    #     bg = Box(self.width * .8, self.height * .6)
-    #     bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
-    #     container = Box(bg.largura * .4, bg.altura * .8)
-    #     x = [bg.x + bg.largura * .075, bg.x + bg.largura * .925 - container.largura]
-    #     container.draw(self.tela, (x[0], bg.y + bg.altura * .1), self.colors["branco_neon"])
-    #     container.draw(self.tela, (x[1], bg.y + bg.altura * .1), self.colors["branco_neon"])
-    #     btn_close = Text("X", self.font_family, 30, self.colors["rosa_choque"], action = "config")
-    #     btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
-    #     self.lista_botoes.append(btn_close)
-    #     p_1 = Text("Player 1", self.font_family, 25, self.colors["pink_neon"])
-    #     p_2 = Text("Player 2", self.font_family, 25, self.colors["pink_neon"])
-    #     p_1.draw(self.tela, (x[0] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
-    #     p_2.draw(self.tela, (x[1] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
-    #     # desenhar botoes para troca de comando
-        
-    #     y_h = p_1.y + p_1.altura + 40
-
-    #     for k, v in p_1_teclas.items():
-    #         movimento = Text(k, self.font_family, 20, self.colors["coral"])
-    #         key = Text(v, self.font_family, 20, self.colors["melancia"], action = "change_key")
-    #         movimento.draw(self.tela, (x[0] + container.largura * .05, y_h))
-    #         key.draw(self.tela, (x[0] + container.largura/2, y_h),  background_color=self.colors["cinza_claro"])
-    #         y_h += movimento.altura + 20
-    #         self.lista_botoes.append(key)
-
-    #     y_h = p_1.y + p_1.altura + 40
-
-    #     for k, v in p_2_teclas.items():
-    #         movimento = Text(k, self.font_family, 20, self.colors["coral"])
-    #         key = Text(v, self.font_family, 20, self.colors["melancia"], action = "change_key")
-    #         movimento.draw(self.tela, (x[1] + container.largura * .05, y_h))
-    #         key.draw(self.tela, (x[1] + container.largura/2, y_h), background_color=self.colors["cinza_claro"])
-    #         y_h += movimento.altura + 20
-    #         p_2_comp[k] = movimento
-    #         self.lista_botoes.append(key)
 
     def loop(self):
         while self.run:

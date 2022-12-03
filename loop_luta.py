@@ -12,13 +12,21 @@ def luta():
   screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
   pygame.display.set_caption("Duelo")
 
+  # Carregando imagem de fundo
+  bg_image = pygame.image.load("assets/images/background/fundo.jpg").convert_alpha()
+
+  # Função para o plano de fundo
+  def plano_de_fundo():
+      escala_img = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+      screen.blit(escala_img, (0, 0))
+
   #frame
   clock = pygame.time.Clock()
   FPS = 60
 
   #cores
   RED = (255, 0, 0)
-  YELLOW = (0, 255, 0)
+  GRAY = (55, 55, 55)
   WHITE = (255, 255, 255)
 
   #Variáveis do jogo 
@@ -31,11 +39,11 @@ def luta():
   #Variavéis dos personagens ( sprites )
   WARRIOR_SIZE = 162
   WARRIOR_SCALE = 4
-  WARRIOR_OFFSET = [72, 41]
+  WARRIOR_OFFSET = [72, 35]
   WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
   WIZARD_SIZE = 250
   WIZARD_SCALE = 4
-  WIZARD_OFFSET = [112, 107]
+  WIZARD_OFFSET = [112, 100]
   WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
   # Sprite dos Jogadores
@@ -62,8 +70,8 @@ def luta():
   def draw_health_bar(health, x, y):
     ratio = health / 100
     pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
-    pygame.draw.rect(screen, RED, (x, y, 400, 30))
-    pygame.draw.rect(screen, (55,55,55), (x, y, 400 * ratio, 30))
+    pygame.draw.rect(screen, GRAY, (x, y, 400, 30))
+    pygame.draw.rect(screen, RED, (x, y, 400 * ratio, 30))
 
 
   # As duas instancias dos jogadores
@@ -76,11 +84,14 @@ def luta():
     screen.fill((123,123,123))
     clock.tick(FPS)
 
+    # Adicionar fundo em loop
+    plano_de_fundo()
+
     # Aqui mostra as estatisticas dos jogadores
     draw_health_bar(fighter_1.health, 20, 20)
     draw_health_bar(fighter_2.health, 580, 20)
-    draw_text("P1: " + str(score[0]), score_font, WHITE, 20, 60)
-    draw_text("P2: " + str(score[1]), score_font, WHITE, 580, 60)
+    draw_text("GUERREIRO: " + str(score[0]), score_font, WHITE, 20, 60)
+    draw_text("MAGO: " + str(score[1]), score_font, WHITE, 580, 60)
 
     #update da contagem regressiva
     if intro_count <= 0:
@@ -116,7 +127,7 @@ def luta():
         round_over_time = pygame.time.get_ticks()
     else:
       # Mostra a imagem de vitória 
-      screen.blit(victory_img, (360, 150))
+      screen.blit(victory_img, (260, 180))
       if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
         round_over = False
         intro_count = 3
