@@ -17,8 +17,8 @@
         "kirby" : "#f368e0"
     },
     "screen":{
-        "width" : 1280,
-        "height": 720
+        "width" : 1000,
+        "height": 600
     },
     "creditos" : {
         "texto" : "Obrigado a todos que jogaram! Foi uma grande honra desenvolver esse jogo e esperamos que vocês se divirtam tanto quanto nós nos divertimos no processo de criação :) \\@adrian667 \\@EriqueFernandes \\@kalebemaiaa \\@MelissaGomesEstrella"

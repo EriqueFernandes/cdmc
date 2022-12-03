@@ -8,7 +8,7 @@ class Fighter():
     self.offset = data[2]
     self.flip = flip
     self.animation_list = self.load_images(sprite_sheet, animation_steps)
-    self.action = 0  
+    self.action = 0
     #0:Parado  #1:Correr  #2:Pular  #3:attack1 #4:attack2 #5:hit #6:Morte
     self.frame_index = 0
     self.image = self.animation_list[self.action][self.frame_index]

@@ -1,145 +1,341 @@
 import pygame
-from pygame import mixer
-from fighter import Fighter
+from loop_luta import luta
+from auxiliares import *
 
-mixer.init()
-pygame.init()
+class Box():
+    def __init__(self, largura, altura):
+        self.largura = largura
+        self.altura = altura 
 
-# Tamanho da janela 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+    def draw(self,surface, coordenada, background_color, centralizado = False, box_shadow = None, borda = None):
+        self.x = coordenada[0] 
+        self.y = coordenada[1]
+        self.background_color = background_color
+        tmp = 0
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Duelo")
+        if centralizado:
+            self.x -= self.largura / 2
+            self.y -= self.altura / 2
 
-#frame
-clock = pygame.time.Clock()
-FPS = 60
+        ret_inside = [self.x, self.y, self.largura, self.altura]
 
-#cores
-RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
-WHITE = (255, 255, 255)
+        ret_bordas = []
 
-#Variáveis do jogo 
-intro_count = 3
-last_count_update = pygame.time.get_ticks()
-score = [0, 0]  # pontuação dos jogadores
-round_over = False
-ROUND_OVER_COOLDOWN = 2000
+        if not borda is None:
+            espessura = borda[0]
+            x_start, x_end = self.x - espessura, self.x + self.largura
+            y_start, y_end = self.y - espessura, self.y + self.altura
 
-#Variavéis dos personagens ( sprites )
-WARRIOR_SIZE = 162
-WARRIOR_SCALE = 4
-WARRIOR_OFFSET = [72, 56]
-WARRIOR_DATA = [WARRIOR_SIZE, WARRIOR_SCALE, WARRIOR_OFFSET]
-WIZARD_SIZE = 250
-WIZARD_SCALE = 3
-WIZARD_OFFSET = [112, 107]
-WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
+            ret_bordas = [[x_start, y_start, espessura, self.altura + 2 * espessura],
+                            [self.x, y_start, self.largura, espessura],
+                            [self.x, y_end, self.largura, espessura],
+                            [x_end, y_start, espessura, self.altura + 2 * espessura]]
 
-# Imagem de Fundo 
-bg_image = pygame.image.load("assets/images/background/background.jpg").convert_alpha()
+            tmp = espessura
 
-# Sprite dos Jogadores
-warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
-wizard_sheet = pygame.image.load("assets/images/wizard/Sprites/wizard.png").convert_alpha()
+        if not box_shadow is None:
+            x_bs, y_bs = box_shadow[0], box_shadow[1]
+            ret_box_shadow = [self.x + x_bs, self.y + y_bs, self.largura + tmp, self.altura + tmp]
 
-# Mensagem de vitoria
-victory_img = pygame.image.load("assets/images/icons/victory.png").convert_alpha()
+            pygame.draw.rect(surface, box_shadow[2], ret_box_shadow)
+        
+        pygame.draw.rect(surface, self.background_color, ret_inside)
 
-# Número de quadros de cada ação das sprites
-WARRIOR_ANIMATION_STEPS = [6, 7, 1, 4, 4, 3, 6]
-WIZARD_ANIMATION_STEPS = [6, 8, 1, 8, 8, 3, 7]
+        for ret in ret_bordas:
+            pygame.draw.rect(surface, borda[1], ret)
 
-# Fonte
-count_font = pygame.font.Font("assets/fonts/turok.ttf", 80)
-score_font = pygame.font.Font("assets/fonts/turok.ttf", 30)
+class Text():
+    def __init__(self, texto, font_family, font_size, color, action = None):
+        self.font = pygame.font.Font(font_family , font_size)
+        self.conteudo_texto = texto
+        self.texto_renderizado = self.font.render(texto, False, color)
+        self.rect = self.texto_renderizado.get_rect()
+        self.action = action
+        self.color = color
+        self.std_input = False
+        if action == "change_key":
+            self.input_on = False
 
-# Função que desenha o texto 
-def draw_text(text, font, text_col, x, y):
-  img = font.render(text, True, text_col)
-  screen.blit(img, (x, y))
+    def draw(self, surface, coordenada, text_shadow=None, background_color=None, centralizado=False, box_shadow=None, borda=None, padding = 5, max_width = None):
+        self.surface = surface
+        self.largura, self.altura = self.rect[2], self.rect[3]
+        self.text_shadow = text_shadow
+        self.background_color = background_color
+        self.centralizado = centralizado
+        self.box_shadow = box_shadow
+        self.borda = borda
+        self.padding = padding
+        self.max_width = max_width
+        if background_color is None:
+            x, y = coordenada
+            
+            self.largura, self.altura = self.rect[2], self.rect[3]
+            
+            if centralizado:
+                x = coordenada[0] - self.rect.width / 2
+                y = coordenada[1] - self.rect.height / 2
 
-# Função que desenha o fundo 
-def draw_bg():
-  scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-  screen.blit(scaled_bg, (0, 0))
+            if not text_shadow is None:
+                if not max_width is None:
+                    linhas = break_text(self.conteudo_texto, y, self.font, max_width, div_linha = 15)
+                    for row in linhas:
+                        texto = self.font.render(" ".join(row[0]), False, text_shadow[2])
+                        surface.blit(texto , (x + text_shadow[0], row[1] + text_shadow[1]))
+                        texto = self.font.render(" ".join(row[0]), False, self.color)
+                        surface.blit(texto , (x , row[1] ))
+                    return
 
-# Função que mostra a barra de vida dos jogadores
-def draw_health_bar(health, x, y):
-  ratio = health / 100
-  pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
-  pygame.draw.rect(screen, RED, (x, y, 400, 30))
-  pygame.draw.rect(screen, YELLOW, (x, y, 400 * ratio, 30))
+                texto = self.font.render(self.conteudo_texto, False, text_shadow[2])
+                surface.blit(texto, (x + text_shadow[0], y + text_shadow[1]))
+
+            if not max_width is None:
+                texto = break_text(self.conteudo_texto, y, self.font, max_width, div_linha = 15)
+                for row in texto:
+                    texto_render = self.font.render(" ".join(row[0]), False, self.color)
+                    surface.blit(texto_render, (x, row[1]))
+                return
+
+            surface.blit(self.texto_renderizado, (x, y))
+
+            self.x, self.y = x, y
+            return 
+
+        box_bg = Box(self.rect.width + 2 * padding, self.rect.height + 2 * padding)
+        box_bg.draw(surface=surface, coordenada=coordenada,background_color=background_color, centralizado=centralizado, box_shadow=box_shadow, borda=borda)
+        
+        x = box_bg.x + (box_bg.largura - self.rect.width) / 2 
+        y = box_bg.y + (box_bg.altura - self.rect.height) / 2 
+
+        if not text_shadow is None:
+            texto = self.font.render(self.conteudo_texto, False, text_shadow[2])
+            surface.blit(texto, (x + text_shadow[0], y + text_shadow[1]))
+        
+        
+        surface.blit(self.texto_renderizado, (x, y))
+        self.largura, self.altura = box_bg.largura, box_bg.altura
+        self.x, self.y = box_bg.x, box_bg.y
+
+    def click(self):
+        # mudar tela dependendo da action
+        if self.action == "menu":
+            return 1
+        elif self.action == "jogar":
+            return 2
+        elif self.action == "config":
+            return 3
+        elif self.action == "sair":
+            return 4
+        elif self.action == "creditos":
+            return 5
+        # elif self.action == "som":
+        #     return 6
+        # elif self.action == "controles":
+        #     return 7
+        # elif self.action == "pause":
+        #     return 8
+        # elif self.action == "change_key":
+        #     print(self.input_on)
+        #     return 9
+
+class Game():
+    def __init__(self):
+        #starta pygame modulo
+        pygame.init()
+
+        #importando dados base
+        importando = importa_json()
+        self.colors = importando[0]
+        self.data = importando[1]
+
+        #ajustando variáveis iniciais
+        self.run = True
+        self.width = self.data["screen"]["width"]
+        self.height = self.data["screen"]["height"]
+        self.desenhado = False
+        self.n_tela = 1
+
+        # setando lista elementos na tela
+        self.lista_botoes = []
+        self.componentes = {}
+        
+
+        # cor de fundo
+        self.background_color = converte_cor("#535c68")
+        
+        #ajusta variavel relogio
+        self.relogio = pygame.time.Clock()
+        
+        #coloca tela
+        self.tela = pygame.display.set_mode((self.width, self.height))
+        
+        #ajusta mouse
+        # pygame.mouse.set_visible(False)
+        # self.cursor_mouse = pygame.image.load("img/icon_mouse.png").convert()
+        
+        #ajusta fonte
+        self.font_family = "config/PressStart2p.ttf"
+        
+        #coloca o titulo
+        pygame.display.set_caption("Crazy fight")
+        
+        #abre tela
+        pygame.display.update()
+        
+        #roda loop do jogo
+        self.loop()
+        
+    def draw_menu(self):
+        # titulo
+        hello = Text("Death strife", self.font_family, 70, self.colors["pink_neon"])
+        hello.draw(self.tela, (self.width / 2,  self.height * .2), [3,3,self.colors["preto_neon"]], centralizado = True)
+
+        # botoes menu principal
+        button_start = Text("START", self.font_family, 25, self.colors["pink_neon"], action = "jogar")
+        button_exit = Text("SAIR", self.font_family, 25, self.colors["pink_neon"], action = "sair")
+        button_config = Text("CONFIG", self.font_family, 25, self.colors["pink_neon"], action = "config")
+        
+        # Nas configurações é interessante mudar as cores pra dar ou ent tirar o som
+        self.lista_botoes.append(button_start)
+        self.lista_botoes.append(button_config)
+        self.lista_botoes.append(button_exit)
+        
+        # desenhando 
+        for _ in self.lista_botoes:
+            margin = 0
+            index_atual = self.lista_botoes.index(_)
+            altura = 0
+
+            if index_atual > 0:
+                altura = self.lista_botoes[index_atual - 1].altura
+                margin = 50
+
+            y = self.height * .2 + hello.rect[3] + 100+  (altura + margin )* index_atual 
+            x = self.width / 2
+            _.draw(self.tela, (x,y), [2,2,self.colors["branco_neon"]], self.colors["preto_neon"], True, [3,3,self.colors["pink_neon"]], [3,self.colors["branco_neon"]], 20)
+
+    def draw_cenario(self):
+        # PS: se as bordas nao alterarem a largura e altura nao é preciso de dois bg_life
+        bg_life= Box(self.width * .35, self.height * .05)
+        x = (self.width * .05, self.width * .95 - bg_life.largura )
+        y = self.height * .05
+        bg_life.draw(coordenada = (x[0],y), surface = self.tela, background_color = self.colors["violeta"], borda = [5, self.colors["azul_depth"]])
+        bg_life.draw(coordenada = (x[1],y), surface = self.tela, background_color = self.colors["violeta"], borda = [5, self.colors["azul_depth"]])
+        life_p1 = Box(self.width * .2, self.height * .05)
+        life_p2 = Box(self.width * .3, self.height * .05)
+        life_p1.draw(coordenada = (x[0], y), surface = self.tela, background_color = self.colors["pink_neon"])
+        life_p2.draw(coordenada = (x[1], y), surface = self.tela, background_color = self.colors["pink_neon"])
+
+        self.componentes["vida_p1"] = life_p1
+        self.componentes["vida_p2"] = life_p2
+
+        texto_vs = Text("VS", self.font_family, font_size= 40, color = self.colors["preto_neon"])
+        self.componentes["texto_vs"] = texto_vs
+        texto_vs.draw(self.tela, (self.width /2, self.height * .1), centralizado= True, text_shadow=[3,3, self.colors["coral"]] )
+
+    def draw_config(self):
+        lista_botoes = []
+        
+        bg_config = Box(self.width * .4, self.height * .8)
+        bg_config.draw(self.tela, (self.width/ 2, self.height / 2), self.colors["preto_neon"], True, borda = [5,self.colors["branco_neon"]])
+        #btn_controles = Text("Controles", self.font_family, 35, self.colors["branco_comum"], action = "controles")
+        #btn_som = Text("Som", self.font_family, 35, self.colors["branco_comum"], action = "som")
+        btn_creditos = Text("Creditos", self.font_family, 35, self.colors["branco_comum"], action = "creditos")
+        btn_voltar = Text("Voltar", self.font_family, 35, self.colors["branco_comum"], action = "menu")
+        
+        #lista_botoes.append(btn_controles)
+        #lista_botoes.append(btn_som)
+        lista_botoes.append(btn_creditos)
+        lista_botoes.append(btn_voltar)
+
+        self.lista_botoes = lista_botoes
+        for _ in lista_botoes:
+            index = lista_botoes.index(_)
+            altura = 0
+            margin = 50
+            if index > 0:
+                altura = lista_botoes[index - 1].altura
+            _.draw(self.tela, (self.width / 2, self.height  * 0.2 + index * (altura+ margin)), [2, 2, self.colors["rosa_choque"]], self.colors["cinza_claro"], True, padding = 10 , borda=[1, self.colors["rosa_choque"]])
+
+    def draw_creditos(self):
+        bg = Box(self.width * .6, self.height * .6)
+        bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
+        agradecimentos = Text(self.data["creditos"]["texto"], self.font_family, 20, self.colors["branco_comum"])
+        agradecimentos.draw(self.tela, (bg.x + bg.largura * .1, bg.y + bg.altura * .1), max_width = bg.largura * .8, text_shadow=[1,1,self.colors["jade_dust"]])       
+        btn_close = Text("X", self.font_family, 30, self.colors["rosa_choque"], action = "config")
+        btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
+        self.lista_botoes.append(btn_close)
+
+    # def draw_controles(self):
+    #     bg = Box(self.width * .8, self.height * .6)
+    #     bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
+    #     container = Box(bg.largura * .4, bg.altura * .8)
+    #     x = [bg.x + bg.largura * .075, bg.x + bg.largura * .925 - container.largura]
+    #     container.draw(self.tela, (x[0], bg.y + bg.altura * .1), self.colors["branco_neon"])
+    #     container.draw(self.tela, (x[1], bg.y + bg.altura * .1), self.colors["branco_neon"])
+    #     btn_close = Text("X", self.font_family, 30, self.colors["rosa_choque"], action = "config")
+    #     btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
+    #     self.lista_botoes.append(btn_close)
+    #     p_1 = Text("Player 1", self.font_family, 25, self.colors["pink_neon"])
+    #     p_2 = Text("Player 2", self.font_family, 25, self.colors["pink_neon"])
+    #     p_1.draw(self.tela, (x[0] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
+    #     p_2.draw(self.tela, (x[1] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
+    #     # desenhar botoes para troca de comando
+        
+    #     y_h = p_1.y + p_1.altura + 40
+
+    #     for k, v in p_1_teclas.items():
+    #         movimento = Text(k, self.font_family, 20, self.colors["coral"])
+    #         key = Text(v, self.font_family, 20, self.colors["melancia"], action = "change_key")
+    #         movimento.draw(self.tela, (x[0] + container.largura * .05, y_h))
+    #         key.draw(self.tela, (x[0] + container.largura/2, y_h),  background_color=self.colors["cinza_claro"])
+    #         y_h += movimento.altura + 20
+    #         self.lista_botoes.append(key)
+
+    #     y_h = p_1.y + p_1.altura + 40
+
+    #     for k, v in p_2_teclas.items():
+    #         movimento = Text(k, self.font_family, 20, self.colors["coral"])
+    #         key = Text(v, self.font_family, 20, self.colors["melancia"], action = "change_key")
+    #         movimento.draw(self.tela, (x[1] + container.largura * .05, y_h))
+    #         key.draw(self.tela, (x[1] + container.largura/2, y_h), background_color=self.colors["cinza_claro"])
+    #         y_h += movimento.altura + 20
+    #         p_2_comp[k] = movimento
+    #         self.lista_botoes.append(key)
+
+    def loop(self):
+        while self.run:
+            self.relogio.tick(60)
+            self.tela.fill(self.background_color )
+            x, y = pygame.mouse.get_pos()
 
 
-# As duas instancias dos jogadores
-fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+            if self.n_tela == 1:
+                self.draw_menu()
+            elif self.n_tela == 2:
+                #self.draw_cenario()
+                x = luta()
+                if x is False:
+                    self.run = False
+            elif self.n_tela == 3:
+                self.draw_config()
+            elif self.n_tela == 4:
+                self.run = False
+            elif self.n_tela == 5:
+                self.draw_creditos()
+            
+            for evento in pygame.event.get():
+                if evento.type == pygame.QUIT:
+                    self.run = False
+                    
+                if evento.type == pygame.MOUSEBUTTONDOWN:
+                    for btn in self.lista_botoes:
+                        if not btn.x + btn.largura >= x >= btn.x or not btn.y + btn.altura >= y >= btn.y: continue
+                        self.lista_botoes = []
+                        self.n_tela = btn.click()
 
-# Loop 
-run = True
-while run:
+            pygame.display.flip()
 
-  clock.tick(FPS)
-
-  #fundo
-  draw_bg()
-
-  # Aqui mostra as estatisticas dos jogadores
-  draw_health_bar(fighter_1.health, 20, 20)
-  draw_health_bar(fighter_2.health, 580, 20)
-  draw_text("P1: " + str(score[0]), score_font, RED, 20, 60)
-  draw_text("P2: " + str(score[1]), score_font, RED, 580, 60)
-
-  #update da contagem regressiva
-  if intro_count <= 0:
-
-    # Move os lutadores
-    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
-  else:
-    # Conta o tempo do display 
-    draw_text(str(intro_count), count_font, RED, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
-    #update conometro 
-    if (pygame.time.get_ticks() - last_count_update) >= 1000:
-      intro_count -= 1
-      last_count_update = pygame.time.get_ticks()
-
-  #update lutadores
-  fighter_1.update()
-  fighter_2.update()
-
-  #desenha os lutadores
-  fighter_1.draw(screen)
-  fighter_2.draw(screen)
-
-  # Checa se o jogador morreu 
-  if round_over == False:
-    if fighter_1.alive == False:
-      score[1] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-    elif fighter_2.alive == False:
-      score[0] += 1
-      round_over = True
-      round_over_time = pygame.time.get_ticks()
-  else:
-    # Mostra a imagem de vitória 
-    screen.blit(victory_img, (360, 150))
-    if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
-      round_over = False
-      intro_count = 3
-      fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-      fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
-
-  # eventos 
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-      run = False
-
-
-  pygame.display.update()
-
-pygame.quit()
+        #rodado caso o jogo encerre
+        pygame.display.quit()
+        
+g = Game()
