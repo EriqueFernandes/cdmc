@@ -167,7 +167,7 @@ class Game():
         self.font_family = "assets/fonts/PressStart2p.ttf"
         
         #coloca o titulo
-        pygame.display.set_caption("Crazy fight")
+        pygame.display.set_caption("Death Strife")
         
         #abre tela
         pygame.display.update()

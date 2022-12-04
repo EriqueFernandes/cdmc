@@ -10,7 +10,7 @@ def luta():
   SCREEN_HEIGHT = 600
 
   screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-  pygame.display.set_caption("Duelo")
+  pygame.display.set_caption("Death Strife")
 
   # Carregando imagem de fundo
   bg_image = pygame.image.load("assets/images/background/fundo1.jpg").convert_alpha()
@@ -47,7 +47,9 @@ def luta():
   WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
   # Carregando sons
-  # pygame.mixer.music.load("assets/som/")
+  pygame.mixer.music.load("assets/som/music_fundo.m4a")
+  pygame.mixer.music.set_volume(0.5)
+  pygame.mixer.music.play(-1, 0.0, 5000)
 
   # Sprite dos Jogadores
   warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
