@@ -13,7 +13,7 @@ def luta():
   pygame.display.set_caption("Duelo")
 
   # Carregando imagem de fundo
-  bg_image = pygame.image.load("assets/images/background/fundo.jpg").convert_alpha()
+  bg_image = pygame.image.load("assets/images/background/fundo1.jpg").convert_alpha()
 
   # Função para o plano de fundo
   def plano_de_fundo():
@@ -45,6 +45,9 @@ def luta():
   WIZARD_SCALE = 4
   WIZARD_OFFSET = [112, 100]
   WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
+
+  # Carregando sons
+  # pygame.mixer.music.load("assets/som/")
 
   # Sprite dos Jogadores
   warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()

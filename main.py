@@ -164,7 +164,7 @@ class Game():
         # self.cursor_mouse = pygame.image.load("img/icon_mouse.png").convert()
         
         #ajusta fonte
-        self.font_family = "config/PressStart2p.ttf"
+        self.font_family = "assets/fonts/PressStart2p.ttf"
         
         #coloca o titulo
         pygame.display.set_caption("Crazy fight")
