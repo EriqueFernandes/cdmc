@@ -55,7 +55,7 @@ Seta para a direira - Move para a direita
 
 Ao iniciar o jogo temos a tela que mostra a arena de batalha com os dois jogadores um de frente pro outro, o jogo tem uma contagem de 3 segundos para começar a luta. Ao iniciar a partida eles lutam até a morte, as barras de vida é mostrada nos cantos superiores direito e esquerdo e abaixo dela mostra a pontuação de cada jogador
 
-<img src="https://user-images.githubusercontent.com/81570326/174503448-0d7726d1-7d54-4902-85f0-63a99d0e1745.png">
+<img src="https://github.com/EriqueFernandes/strife/blob/main/tela.jpg?raw=true">
 
 
 
