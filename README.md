@@ -65,6 +65,18 @@ Ao iniciar o jogo temos a tela que mostra a arena de batalha com os dois jogador
 
 
 
+## Créditos 
+
+Adrian Filipe
+
+Erique Fernandes 
+
+Kalebe Felipe Santana Maia
+
+Melissa Estrella 
+
+
+
 
 
 
