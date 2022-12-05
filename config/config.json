@@ -43,5 +43,8 @@
         "config":{
             "pause" : ["P", "ESC"]
         }
-    }
+    },
+    "cenarios": [
+        "path_1", "path_2",  "path_3"
+    ]
 }

@@ -2,7 +2,7 @@ import pygame
 from pygame import mixer
 from fighter import Fighter
 
-def luta() -> False:
+def luta(path_mapa) -> False:
   """Nessa função está sendo executada todo desenho do jogo na tela em que foi criada pelo pygame. Para isso foram utilizadas as 
   variáveis com plano de fundo, detalhes e personagens.
 
@@ -19,7 +19,7 @@ def luta() -> False:
   pygame.display.set_caption("Death Strife")
 
   # Carregando imagem de fundo
-  bg_image = pygame.image.load("assets/images/background/fundo1.jpg").convert_alpha()
+  bg_image = pygame.image.load(path_mapa).convert_alpha()
 
   # Função para o plano de fundo
   def plano_de_fundo():

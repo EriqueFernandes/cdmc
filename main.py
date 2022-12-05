@@ -1,7 +1,10 @@
 import pygame
-from pygame import mixer
 from loop_luta import luta
 from auxiliares import *
+
+
+#starta pygame modulo
+pygame.init()
 
 class Box():
     def __init__(self, largura, altura):
@@ -81,16 +84,12 @@ class Text():
         :param action: ação de objeto
         :type action: String
         """        
-        print(type(font_family))
         self.font = pygame.font.Font(font_family , font_size)
         self.conteudo_texto = texto
         self.texto_renderizado = self.font.render(texto, False, color)
         self.rect = self.texto_renderizado.get_rect()
         self.action = action
         self.color = color
-        self.std_input = False
-        if action == "change_key":
-            self.input_on = False
 
     def draw(self, surface, coordenada, text_shadow=None, background_color=None, centralizado=False, box_shadow=None, borda=None, padding = 5, max_width = None):
         """ Função para desenhar texto
@@ -189,12 +188,14 @@ class Text():
             return 4
         elif self.action == "creditos":
             return 5
+        elif self.action == "choose_cenario":
+            print(self.conteudo_texto[-1])
+            return 6, self.conteudo_texto[-1]
+        elif self.action == "controles":
+            return 7
         
 class Game():
     def __init__(self):
-        #starta pygame modulo
-        pygame.init()
-
         #importando dados base
         importando = importa_json()
         self.colors = importando[0]
@@ -206,6 +207,7 @@ class Game():
         self.height = self.data["screen"]["height"]
         self.desenhado = False
         self.n_tela = 1
+        self.n_mapa = 0
 
         # setando lista elementos na tela
         self.lista_botoes = []
@@ -219,10 +221,6 @@ class Game():
         
         #coloca tela
         self.tela = pygame.display.set_mode((self.width, self.height))
-        
-        #ajusta mouse
-        # pygame.mouse.set_visible(False)
-        # self.cursor_mouse = pygame.image.load("img/icon_mouse.png").convert()
         
         #ajusta fonte
         self.font_family = "assets/fonts/PressStart2p.ttf"
@@ -266,37 +264,22 @@ class Game():
             x = self.width / 2
             _.draw(self.tela, (x,y), [2,2,self.colors["branco_neon"]], self.colors["preto_neon"], True, [3,3,self.colors["pink_neon"]], [3,self.colors["branco_neon"]], 20)
 
-    def draw_cenario(self):
-        # PS: se as bordas nao alterarem a largura e altura nao é preciso de dois bg_life
-        bg_life= Box(self.width * .35, self.height * .05)
-        x = (self.width * .05, self.width * .95 - bg_life.largura )
-        y = self.height * .05
-        bg_life.draw(coordenada = (x[0],y), surface = self.tela, background_color = self.colors["violeta"], borda = [5, self.colors["azul_depth"]])
-        bg_life.draw(coordenada = (x[1],y), surface = self.tela, background_color = self.colors["violeta"], borda = [5, self.colors["azul_depth"]])
-        life_p1 = Box(self.width * .2, self.height * .05)
-        life_p2 = Box(self.width * .3, self.height * .05)
-        life_p1.draw(coordenada = (x[0], y), surface = self.tela, background_color = self.colors["pink_neon"])
-        life_p2.draw(coordenada = (x[1], y), surface = self.tela, background_color = self.colors["pink_neon"])
-
-        self.componentes["vida_p1"] = life_p1
-        self.componentes["vida_p2"] = life_p2
-
-        texto_vs = Text("VS", self.font_family, font_size= 40, color = self.colors["preto_neon"])
-        self.componentes["texto_vs"] = texto_vs
-        texto_vs.draw(self.tela, (self.width /2, self.height * .1), centralizado= True, text_shadow=[3,3, self.colors["coral"]] )
-
+    def draw_choose_cenario(self):
+        cenarios = self.data["cenarios"]
+        for i in range(len(cenarios)):
+            btn = Text(f'cenario {i}', self.font_family, 25, self.colors["kirby"], action="choose_cenario")
+            btn.draw(self.tela, (self.width * .1 + i * (btn.rect[2] + 40),self.height / 2 + 3 * btn.rect[3]), [3,3,self.colors["branco_neon"]], self.colors["preto_neon"], False, [3,3,self.colors["azul_depth"]], [3, self.colors["branco_neon"]])
+            self.lista_botoes.append(btn)
     def draw_config(self):
         lista_botoes = []
         
         bg_config = Box(self.width * .4, self.height * .8)
         bg_config.draw(self.tela, (self.width/ 2, self.height / 2), self.colors["preto_neon"], True, borda = [5,self.colors["branco_neon"]])
-        #btn_controles = Text("Controles", self.font_family, 35, self.colors["branco_comum"], action = "controles")
-        #btn_som = Text("Som", self.font_family, 35, self.colors["branco_comum"], action = "som")
+        btn_controles = Text("Controles", self.font_family, 35, self.colors["branco_comum"], action = "controles")
         btn_creditos = Text("Creditos", self.font_family, 35, self.colors["branco_comum"], action = "creditos")
         btn_voltar = Text("Voltar", self.font_family, 35, self.colors["branco_comum"], action = "menu")
         
-        #lista_botoes.append(btn_controles)
-        #lista_botoes.append(btn_som)
+        lista_botoes.append(btn_controles)
         lista_botoes.append(btn_creditos)
         lista_botoes.append(btn_voltar)
 
@@ -309,6 +292,43 @@ class Game():
                 altura = lista_botoes[index - 1].altura
             _.draw(self.tela, (self.width / 2, self.height  * 0.2 + index * (altura+ margin)), [2, 2, self.colors["rosa_choque"]], self.colors["cinza_claro"], True, padding = 10 , borda=[1, self.colors["rosa_choque"]])
 
+    def draw_controles(self):
+        bg = Box(self.width * .8, self.height * .6)
+        bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
+        container = Box(bg.largura * .4, bg.altura * .9)
+        x = [bg.x + bg.largura * .075, bg.x + bg.largura * .925 - container.largura]
+        container.draw(self.tela, (x[0], bg.y + bg.altura * .05), self.colors["branco_neon"])
+        container.draw(self.tela, (x[1], bg.y + bg.altura * .05), self.colors["branco_neon"])
+        btn_close = Text("X", self.font_family, 30, self.colors["rosa_choque"], action = "config")
+        btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
+        self.lista_botoes.append(btn_close)
+        p_1 = Text("Player 1", self.font_family, 25, self.colors["pink_neon"])
+        p_2 = Text("Player 2", self.font_family, 25, self.colors["pink_neon"])
+        p_1.draw(self.tela, (x[0] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
+        p_2.draw(self.tela, (x[1] + (container.largura - p_1.rect.width)/2, container.y + container.altura * .05), [3,3, self.colors["violeta"]])
+        # desenhar botoes para mostrar os comando
+        
+        y_h = p_1.y + p_1.altura + 40
+
+        p_1_teclas = self.data["teclas"]["player_1"]
+        p_2_teclas = self.data["teclas"]["player_2"]
+
+        for k, v in p_1_teclas.items():
+            movimento = Text(k, self.font_family, 15, self.colors["coral"])
+            key = Text(v, self.font_family, 15, self.colors["melancia"], action = "change_key")
+            movimento.draw(self.tela, (x[0] + container.largura * .05, y_h))
+            key.draw(self.tela, (x[0] + container.largura/2, y_h),  background_color=self.colors["cinza_claro"])
+            y_h += movimento.altura + 20
+
+        y_h = p_1.y + p_1.altura + 40
+
+        for k, v in p_2_teclas.items():
+            movimento = Text(k, self.font_family, 15, self.colors["coral"])
+            key = Text(v, self.font_family, 15, self.colors["melancia"], action = "change_key")
+            movimento.draw(self.tela, (x[1] + container.largura * .05, y_h))
+            key.draw(self.tela, (x[1] + container.largura/2, y_h), background_color=self.colors["cinza_claro"])
+            y_h += movimento.altura + 20
+
     def draw_creditos(self):
         bg = Box(self.width * .6, self.height * .6)
         bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
@@ -317,7 +337,6 @@ class Game():
         btn_close = Text("X", self.font_family, 30, self.colors["rosa_choque"], action = "config")
         btn_close.draw(self.tela, (bg.x + bg.largura - btn_close.rect[2] * 1.5, bg.y + btn_close.rect[3]/2), [3,3, self.colors["branco_neon"]])
         self.lista_botoes.append(btn_close)
-
 
     def loop(self):
         while self.run:
@@ -330,17 +349,21 @@ class Game():
                 self.draw_menu()
 
             elif self.n_tela == 2:
-                #self.draw_cenario()
-                x = luta()
-                if x is False:
-                    self.run = False
+                self.draw_choose_cenario()
             elif self.n_tela == 3:
                 self.draw_config()
             elif self.n_tela == 4:
                 self.run = False
             elif self.n_tela == 5:
                 self.draw_creditos()
-            
+            elif self.n_tela == 6:
+                mapa = self.data["cenarios"][int(self.n_mapa)]
+                x = luta(mapa)
+                if x is False:
+                    self.run = False
+            elif self.n_tela == 7:
+                self.draw_controles()
+
             for evento in pygame.event.get():
                 if evento.type == pygame.QUIT:
                     self.run = False
@@ -350,7 +373,9 @@ class Game():
                         if not btn.x + btn.largura >= x >= btn.x or not btn.y + btn.altura >= y >= btn.y: continue
                         self.lista_botoes = []
                         self.n_tela = btn.click()
-
+                        if btn.action == "choose_cenario": 
+                            self.n_mapa = self.n_tela[1]
+                            self.n_tela = self.n_tela[0]
             pygame.display.flip()
 
         #rodado caso o jogo encerre
