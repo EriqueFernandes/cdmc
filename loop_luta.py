@@ -3,8 +3,8 @@ from pygame import mixer
 from fighter import Fighter
 
 def luta():
-  mixer.init()
   pygame.init()
+  mixer.init()
   # Tamanho da janela 
   SCREEN_WIDTH = 1000
   SCREEN_HEIGHT = 600
@@ -47,9 +47,17 @@ def luta():
   WIZARD_DATA = [WIZARD_SIZE, WIZARD_SCALE, WIZARD_OFFSET]
 
   # Carregando sons
-  pygame.mixer.music.load("assets/som/music_fundo.m4a")
-  pygame.mixer.music.set_volume(0.5)
+  pygame.mixer.music.load("assets/som/music_fundo.mp3")
+  pygame.mixer.music.set_volume(0.3)
   pygame.mixer.music.play(-1, 0.0, 5000)
+  sword_atk1 = pygame.mixer.Sound("assets/som/guerreiro_ataque1.mp3")
+  sword_atk1.set_volume(0.75)
+  # sword_atk2 = pygame.mixer.Sound("assets/som/guerreiro_ataque2.mp3")
+  # sword_atk2.set_volume(0.75)
+  magic_atk1 = pygame.mixer.Sound("assets/som/mago_ataque1.mp3")
+  magic_atk1.set_volume(0.75)
+  # magic_atk2 = pygame.mixer.Sound("assets/som/mago_ataque2.mp3")
+  # magic_atk2.set_volume(0.5)
 
   # Sprite dos Jogadores
   warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
@@ -80,8 +88,8 @@ def luta():
 
 
   # As duas instancias dos jogadores
-  fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-  fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+  fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_atk1)
+  fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_atk1)
 
 # Loop   
   run = True
@@ -136,8 +144,8 @@ def luta():
       if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
         round_over = False
         intro_count = 3
-        fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS)
-        fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS)
+        fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_atk1)
+        fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_atk1)
 
     # eventos 
     for event in pygame.event.get():
