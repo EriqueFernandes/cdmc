@@ -63,12 +63,8 @@ def luta(path_mapa) -> False:
   pygame.mixer.music.play(-1, 0.0, 5000)
   sword_atk1 = pygame.mixer.Sound("assets/som/guerreiro_ataque1.mp3")
   sword_atk1.set_volume(0.75)
-  # sword_atk2 = pygame.mixer.Sound("assets/som/guerreiro_ataque2.mp3")
-  # sword_atk2.set_volume(0.75)
   magic_atk1 = pygame.mixer.Sound("assets/som/mago_ataque1.mp3")
   magic_atk1.set_volume(0.75)
-  # magic_atk2 = pygame.mixer.Sound("assets/som/mago_ataque2.mp3")
-  # magic_atk2.set_volume(0.5)
 
   # Sprite dos Jogadores
   warrior_sheet = pygame.image.load("assets/images/warrior/Sprites/warrior.png").convert_alpha()
