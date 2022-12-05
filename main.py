@@ -1,13 +1,35 @@
 import pygame
+from pygame import mixer
 from loop_luta import luta
 from auxiliares import *
 
 class Box():
     def __init__(self, largura, altura):
+        """ Construtor da classe
+        :param largura: largura para tela
+        :type largura: float
+        :param altura: altura para tela
+        :type altura: float
+        """        
         self.largura = largura
         self.altura = altura 
 
     def draw(self,surface, coordenada, background_color, centralizado = False, box_shadow = None, borda = None):
+        """ Função para desenhar objetos
+
+        :param surface: superfície para desenho
+        :type surface: pygame.Surface
+        :param coordenada: lista de coordenada envolvendo eixo x e y
+        :type coordenada: list
+        :param background_color: cor do background
+        :type background_color: tuple
+        :param centralizado: caso para centralização de objeto
+        :type centralizado: bool
+        :param box_shadow: sombra para caixa
+        :type box_shadow: list
+        :param borda: borda para caixa
+        :type borda: list
+        """        
         self.x = coordenada[0] 
         self.y = coordenada[1]
         self.background_color = background_color
@@ -46,6 +68,20 @@ class Box():
 
 class Text():
     def __init__(self, texto, font_family, font_size, color, action = None):
+        """ Construtor da classe
+
+        :param texto: texto para uso
+        :type texto: String
+        :param font_family: font para texto
+        :type font_family: String
+        :param font_size: tamanho da letra
+        :type font_size: float
+        :param color: cor para texto
+        :type color: tuple
+        :param action: ação de objeto
+        :type action: String
+        """        
+        print(type(font_family))
         self.font = pygame.font.Font(font_family , font_size)
         self.conteudo_texto = texto
         self.texto_renderizado = self.font.render(texto, False, color)
@@ -57,6 +93,27 @@ class Text():
             self.input_on = False
 
     def draw(self, surface, coordenada, text_shadow=None, background_color=None, centralizado=False, box_shadow=None, borda=None, padding = 5, max_width = None):
+        """ Função para desenhar texto
+
+        :param surface: superfície para desenho
+        :type surface: pygame.Surface
+        :param coordenada: lista de coordenada envolvendo eixo x e y
+        :type coordenada: list
+        :param text_shadow: sombra para texto
+        :type text_shadow: list
+        :param background_color: cor para fundo
+        :type background_color: tuple
+        :param centralizado: caso para centralização de objeto
+        :type centralizado: bool
+        :param box_shadow: sombra para caixa
+        :type box_shadow: list
+        :param borda: borda para caixa de texto
+        :type borda: list
+        :param padding: preenchimento da caixa
+        :type padding: int
+        :param max_width: tamanho máximo
+        :type max_width: float
+        """        
         self.surface = surface
         self.largura, self.altura = self.rect[2], self.rect[3]
         self.text_shadow = text_shadow
@@ -115,7 +172,12 @@ class Text():
         self.largura, self.altura = box_bg.largura, box_bg.altura
         self.x, self.y = box_bg.x, box_bg.y
 
-    def click(self):
+    def click(self) -> int:
+        """ Função para clique em caixas
+
+        :return: valor da caixa selecionada
+        :rtype: int
+        """        
         # mudar tela dependendo da action
         if self.action == "menu":
             return 1
@@ -148,7 +210,6 @@ class Game():
         # setando lista elementos na tela
         self.lista_botoes = []
         self.componentes = {}
-        
 
         # cor de fundo
         self.background_color = converte_cor("#535c68")
@@ -176,6 +237,7 @@ class Game():
         self.loop()
         
     def draw_menu(self):
+
         # titulo
         hello = Text("Death strife", self.font_family, 70, self.colors["pink_neon"])
         hello.draw(self.tela, (self.width / 2,  self.height * .2), [3,3,self.colors["preto_neon"]], centralizado = True)
@@ -266,6 +328,7 @@ class Game():
 
             if self.n_tela == 1:
                 self.draw_menu()
+
             elif self.n_tela == 2:
                 #self.draw_cenario()
                 x = luta()

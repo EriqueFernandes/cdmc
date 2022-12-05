@@ -2,7 +2,13 @@ import pygame
 from pygame import mixer
 from fighter import Fighter
 
-def luta():
+def luta() -> False:
+  """Nessa função está sendo executada todo desenho do jogo na tela em que foi criada pelo pygame. Para isso foram utilizadas as 
+  variáveis com plano de fundo, detalhes e personagens.
+
+  :return: Retorna Falso paraa que consiga ser iniciada a tela da batalha após clicar em Start no menu
+  :rtype: False
+  """  
   pygame.init()
   mixer.init()
   # Tamanho da janela 
@@ -17,8 +23,10 @@ def luta():
 
   # Função para o plano de fundo
   def plano_de_fundo():
-      escala_img = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-      screen.blit(escala_img, (0, 0))
+    """ É criado plano de fundo dentro da tela e desenhada durante todo o tempo
+    """  
+    escala_img = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.blit(escala_img, (0, 0))
 
   #frame
   clock = pygame.time.Clock()
@@ -76,11 +84,33 @@ def luta():
 
   # Função que desenha o texto 
   def draw_text(text, font, text_col, x, y):
+    """função para acrescentar texto na tela no jogo
+
+    :param text: Texto para ser desenhado na tela
+    :type text: String
+    :param font: fonte para o texto
+    :type font: pygame.font.Font
+    :param text_col: cor para o texto
+    :type text_col: tuple
+    :param x: valor de posição do eixo x
+    :type x: float
+    :param y: valor de posição do eixo y
+    :type y: float
+    """    
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
   # Função que mostra a barra de vida dos jogadores
   def draw_health_bar(health, x, y):
+    """Função para exibição da barra de vida dos personagens
+
+    :param health: valor da quantidade de vida
+    :type health: float
+    :param x: valor de posição do eixo x
+    :type x: float
+    :param y: valor de posição do eixo y
+    :type y: float
+    """    
     ratio = health / 100
     pygame.draw.rect(screen, WHITE, (x - 2, y - 2, 404, 34))
     pygame.draw.rect(screen, GRAY, (x, y, 400, 30))

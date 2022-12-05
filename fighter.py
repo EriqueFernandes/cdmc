@@ -1,7 +1,26 @@
 import pygame
 
-class Fighter():
+class Fighter():  
   def __init__(self, player, x, y, flip, data, sprite_sheet, animation_steps, sound):
+    """ Construtor para iniciação de todos parâmetros em uso para os personagens
+
+    :param player: personagem
+    :type player: int
+    :param x: valor da posição no eixo x
+    :type x: float
+    :param y: valor da posição no eixo y
+    :type y: float
+    :param flip: giro de imagem
+    :type flip: bool
+    :param data: lista para desenho do personagem
+    :type data: list
+    :param sprite_sheet: imagem do personagem
+    :type sprite_sheet: pygame.Surface
+    :param animation_steps: animações
+    :type animation_steps: list
+    :param sound: música de golpes
+    :type sound: Sound
+    """    
     self.player = player
     self.size = data[0]
     self.image_scale = data[1]
@@ -28,7 +47,16 @@ class Fighter():
 
 # Função que carrega a sprite e corta ela em pequenos retangulos 
 
-  def load_images(self, sprite_sheet, animation_steps):
+  def load_images(self, sprite_sheet, animation_steps) -> list:
+    """ Função para carregar os sprites
+
+    :param sprite_sheet: imagem do personagem
+    :type sprite_sheet: pygame.Surface
+    :param animation_steps: animações
+    :type animation_steps: list
+    :return: fotos das animações dos sprites
+    :rtype: list
+    """    
     animation_list = []
     for y, animation in enumerate(animation_steps):
       temp_img_list = []
@@ -40,6 +68,19 @@ class Fighter():
 
 
   def move(self, screen_width, screen_height, surface, target, round_over):
+    """ Função para movimento das personagens
+
+    :param screen_width: largura da tela
+    :type screen_width: float
+    :param screen_height: altura da tela
+    :type screen_height: float
+    :param surface: superfície para desenho
+    :type surface: pygame.Surface
+    :param target: alvo
+    :type target: objeto fighter 
+    :param round_over: término de round
+    :type round_over: Bool
+    """    
     SPEED = 10
     GRAVITY = 2
     dx = 0
@@ -128,6 +169,8 @@ class Fighter():
 
   #handle animation updates
   def update(self):
+    """ Função para atualização de animações
+    """    
     #check what action the player is performing
     if self.health <= 0:
       self.health = 0
@@ -174,6 +217,10 @@ class Fighter():
 
 
   def attack(self, target):
+    """ Função para ataques das personagens
+    :param target: alvo
+    :type target: objeto fighter 
+    """    
     if self.attack_cooldown == 0:
       #execute attack
       self.attacking = True
@@ -185,6 +232,11 @@ class Fighter():
 
 
   def update_action(self, new_action):
+    """ Função para atualização de ações
+
+    :param new_action: nova ação dentro do jogo
+    :type new_action: int
+    """    
     #check if the new action is different to the previous one
     if new_action != self.action:
       self.action = new_action
@@ -193,5 +245,10 @@ class Fighter():
       self.update_time = pygame.time.get_ticks()
 
   def draw(self, surface):
+    """ Funçao para empate entre personagens
+
+    :param surface: superfície para desenho
+    :type surface: pygame.Surface
+    """    
     img = pygame.transform.flip(self.image, self.flip, False)
     surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
