@@ -45,6 +45,6 @@
         }
     },
     "cenarios": [
-        "path_1", "path_2",  "path_3"
+        "assets/images/background/fundo1.jpg", "assets/images/background/fundo.jpg",  "assets/images/background/fundo2.jpg"
     ]
 }

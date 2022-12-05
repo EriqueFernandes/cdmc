@@ -393,4 +393,4 @@ class Game():
         #rodado caso o jogo encerre
         pygame.display.quit()
         
-#g = Game()
+g = Game()
