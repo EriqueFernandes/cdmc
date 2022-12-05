@@ -189,7 +189,6 @@ class Text():
         elif self.action == "creditos":
             return 5
         elif self.action == "choose_cenario":
-            print(self.conteudo_texto[-1])
             return 6, self.conteudo_texto[-1]
         elif self.action == "controles":
             return 7
