@@ -1,6 +1,8 @@
 import pygame
 from pygame import mixer
 from fighter import Fighter
+from auxiliares import *
+from components import Text
 
 def luta(path_mapa) -> False:
   """Nessa função está sendo executada todo desenho do jogo na tela em que foi criada pelo pygame. Para isso foram utilizadas as 
@@ -9,12 +11,13 @@ def luta(path_mapa) -> False:
   :return: Retorna Falso paraa que consiga ser iniciada a tela da batalha após clicar em Start no menu
   :rtype: False
   """  
+  cores = importa_json()[0]
   pygame.init()
   mixer.init()
   # Tamanho da janela 
   SCREEN_WIDTH = 1000
   SCREEN_HEIGHT = 600
-
+  
   screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
   pygame.display.set_caption("Death Strife")
 
@@ -121,7 +124,10 @@ def luta(path_mapa) -> False:
   fighter_1 = Fighter(1, 200, 310, False, WARRIOR_DATA, warrior_sheet, WARRIOR_ANIMATION_STEPS, sword_atk1)
   fighter_2 = Fighter(2, 700, 310, True, WIZARD_DATA, wizard_sheet, WIZARD_ANIMATION_STEPS, magic_atk1)
 
-# Loop   
+  #icon
+  pygame_icon = pygame.image.load('./static/assets/logo.png')
+  pygame.display.set_icon(pygame_icon)
+  # Loop luta   
   run = True
   while run:
     screen.fill((123,123,123))
@@ -135,6 +141,7 @@ def luta(path_mapa) -> False:
     draw_health_bar(fighter_2.health, 580, 20)
     draw_text("GUERREIRO: " + str(score[0]), score_font, WHITE, 20, 60)
     draw_text("MAGO: " + str(score[1]), score_font, WHITE, 580, 60)
+    draw_text("VS", count_font, WHITE, 460,0)
 
     #update da contagem regressiva
     if intro_count <= 0:

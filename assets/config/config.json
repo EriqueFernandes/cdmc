@@ -1,0 +1,40 @@
+{
+    "colors": {
+        "pink_neon" : "#fb0072",
+        "preto_neon": "#020202",
+        "cinza_claro": "#c2c2c2",
+        "azul_depth": "#191970",
+        "branco_neon": "#f0eeee",
+        "jade_dust" : "#00d2d3",
+        "kirby" : "#f368e0"
+    },
+    "screen":{
+        "width" : 1000,
+        "height": 600
+    },
+    "creditos" : {
+        "texto" : "Obrigado a todos que jogaram! Foi uma grande honra desenvolver esse jogo e esperamos que vocês se divirtam tanto quanto nós nos divertimos no processo de criação :) \\@adrian667 \\@EriqueFernandes \\@kalebemaiaa \\@MelissaGomesEstrella"
+    },
+    "teclas":{
+        "player_1":{
+            "up": "W",
+            "right" : "D",
+            "left" : "A",
+            "ataque_1" : "R",
+            "ataque_2" : "T"
+        },
+        "player_2":{
+            "up": "UP_ARROW",
+            "right" : "RT_ARROW",
+            "left" : "LF_ARROW",
+            "ataque_1" : "1",
+            "ataque_2" : "2"
+        },
+        "config":{
+            "pause" : ["P", "ESC"]
+        }
+    },
+    "cenarios": [
+        "assets/images/background/fundo1.jpg", "assets/images/background/fundo.jpg",  "assets/images/background/fundo2.jpg"
+    ]
+}

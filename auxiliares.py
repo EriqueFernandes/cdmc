@@ -23,7 +23,7 @@ def importa_json() -> dict:
     """    
     cores = {}
     data = {}
-    with open("./config/config.json", "r", encoding="utf-8") as f:
+    with open("./assets/config/config.json", "r", encoding="utf-8") as f:
         d = json.load(f)
 
         for k, v in d.items():
