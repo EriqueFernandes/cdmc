@@ -196,6 +196,8 @@ class Text():
         
 class Game():
     def __init__(self):
+        """Construtor para iniciar as variáveis necessárias para o jogo
+        """        
         #importando dados base
         importando = importa_json()
         self.colors = importando[0]
@@ -235,7 +237,8 @@ class Game():
         self.loop()
         
     def draw_menu(self):
-
+        """funcao utilizada para desenhar o menu principal com seus componentes e botoes
+        """        
         # titulo
         hello = Text("Death strife", self.font_family, 70, self.colors["pink_neon"])
         hello.draw(self.tela, (self.width / 2,  self.height * .2), [3,3,self.colors["preto_neon"]], centralizado = True)
@@ -265,12 +268,16 @@ class Game():
             _.draw(self.tela, (x,y), [2,2,self.colors["branco_neon"]], self.colors["preto_neon"], True, [3,3,self.colors["pink_neon"]], [3,self.colors["branco_neon"]], 20)
 
     def draw_choose_cenario(self):
+        """exibe um mini menu ppara o usuario escolher qual fase quer jogar
+        """        
         cenarios = self.data["cenarios"]
         for i in range(len(cenarios)):
             btn = Text(f'cenario {i}', self.font_family, 25, self.colors["kirby"], action="choose_cenario")
             btn.draw(self.tela, (self.width * .1 + i * (btn.rect[2] + 40),self.height / 2 + 3 * btn.rect[3]), [3,3,self.colors["branco_neon"]], self.colors["preto_neon"], False, [3,3,self.colors["azul_depth"]], [3, self.colors["branco_neon"]])
             self.lista_botoes.append(btn)
     def draw_config(self):
+        """funcao desenha o menu de configuracoes e seus botoes
+        """        
         lista_botoes = []
         
         bg_config = Box(self.width * .4, self.height * .8)
@@ -293,6 +300,8 @@ class Game():
             _.draw(self.tela, (self.width / 2, self.height  * 0.2 + index * (altura+ margin)), [2, 2, self.colors["rosa_choque"]], self.colors["cinza_claro"], True, padding = 10 , borda=[1, self.colors["rosa_choque"]])
 
     def draw_controles(self):
+        """esta funcao constroi o menu de exibicao para mostrar as teclas utilizadas no jogo
+        """        
         bg = Box(self.width * .8, self.height * .6)
         bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
         container = Box(bg.largura * .4, bg.altura * .9)
@@ -330,6 +339,8 @@ class Game():
             y_h += movimento.altura + 20
 
     def draw_creditos(self):
+        """funcao responsavel por fazer a tela de agradecimento
+        """        
         bg = Box(self.width * .6, self.height * .6)
         bg.draw(self.tela, (self.width / 2, self.height / 2), self.colors["preto_neon"], True, borda=[3,self.colors["cinza_claro"]])
         agradecimentos = Text(self.data["creditos"]["texto"], self.font_family, 20, self.colors["branco_comum"])
@@ -339,6 +350,8 @@ class Game():
         self.lista_botoes.append(btn_close)
 
     def loop(self):
+        """Funcao que roda o loopde jogo
+        """        
         while self.run:
             self.relogio.tick(60)
             self.tela.fill(self.background_color )
@@ -381,4 +394,4 @@ class Game():
         #rodado caso o jogo encerre
         pygame.display.quit()
         
-g = Game()
+#g = Game()

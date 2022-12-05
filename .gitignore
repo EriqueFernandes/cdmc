@@ -2,3 +2,7 @@ __pycache__
 config/classe_k.pdf
 config/uml_k.pdf
 .vscode
+source
+build
+make.bat
+Makefile

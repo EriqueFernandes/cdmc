@@ -1,6 +1,13 @@
 import json
 
 def converte_cor(cor):
+    """recebe um texto que represente uma cor em padrao hexadecimal e devolve o RGB correspondente
+
+    :param cor: string do hexadecimal de uma cor
+    :type cor: str
+    :return: retorna uma tupla com o RGB da cor
+    :rtype: tuple
+    """    
     if isinstance(cor,tuple):
         return cor
     color = cor.lstrip('#')
@@ -8,7 +15,12 @@ def converte_cor(cor):
     
     return color
 
-def importa_json():
+def importa_json() -> dict:
+    """A funcao abre o arquivo json e retorna dois dicionarios com dados relacionados com o jogo. 
+
+    :return: O primeiro sao as cores utilizadas e o segundo sao os que impactam no jogo
+    :rtype: dict
+    """    
     cores = {}
     data = {}
     with open("./config/config.json", "r", encoding="utf-8") as f:
@@ -24,6 +36,21 @@ def importa_json():
     return cores, data
 
 def break_text(texto, y, fonte, largura_maxima, div_linha):
+    """A funcao recebe um texto e devolve uma lista com linhas para serem exibidas na tela
+
+    :param texto: O texto que deve ser exibido
+    :type texto: str
+    :param y: a posicao inicial y em que o texto deve aparecer
+    :type y: int
+    :param fonte: fonte pygame para ser renderizada
+    :type fonte: pygame.Font
+    :param largura_maxima: a largura do container que ira conter o texto
+    :type largura_maxima: int
+    :param div_linha: a distancia entre as linhas do texto
+    :type div_linha: int
+    :return: retorna uma lista com o texto recebido como argumento quebrado em linhas que caibam na largura especificada
+    :rtype: list
+    """    
     palavras = texto.split()
     linhas = []
     linha = []
